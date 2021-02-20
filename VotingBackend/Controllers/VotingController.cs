@@ -35,12 +35,13 @@ namespace VotingBackend.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Voting>> Index(Guid id)
+        public async Task<ActionResult<VotingDto>> Index(Guid id)
         {
             try
             {
-                return Ok(await _service.GetVoteDetail(id));
-            }
+                var votingDetail = await _service.GetVoteDetail(id);
+                return Ok(votingDetail);
+            } 
             catch (Exception ex)
             {
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex);
