@@ -18,7 +18,6 @@ namespace VotingBackend.Repositories
         {
             return await GetAll().ToListAsync();
         }
-
         public async Task<Voting> GetVoteById(Guid id)
         {
             try

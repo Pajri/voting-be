@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Sieve.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,9 +28,23 @@ namespace VotingBackend.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Voting>> Index()
+        [Authorize(Roles = Constant.ROLE_ADMIN + "," + Constant.ROLE_CLIENT)]
+        public async Task<ActionResult<Voting>> Index([FromQuery] SieveModel sieveModel)
         {
-            return Ok(await _service.GetAllVoting()); 
+            return Ok(await _service.GetAllVoting(sieveModel)); 
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Voting>> Index(Guid id)
+        {
+            try
+            {
+                return Ok(await _service.GetVoteDetail(id));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
         }
 
         [HttpPost]

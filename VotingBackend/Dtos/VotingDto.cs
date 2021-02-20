@@ -13,5 +13,6 @@ namespace VotingBackend.Dtos
         public DateTime CreatedDate { get; set; }
         public int VotersCount { get; set; }
         public DateTime DueDate { get; set; }
+        public String Category { get; set; }
     }
 }

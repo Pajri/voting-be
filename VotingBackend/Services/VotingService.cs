@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using Sieve.Models;
+using Sieve.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -14,11 +17,13 @@ namespace VotingBackend.Services
     {
         private readonly IVotingRepository _votingRepository;
         private readonly IUserRepository _userRepository;
+        private readonly ISieveProcessor _sieveProcessor;
 
-        public VotingService(IVotingRepository votingRepository, IUserRepository userRepository)
+        public VotingService(IVotingRepository votingRepository, IUserRepository userRepository, ISieveProcessor sieveProcessor)
         {
             _votingRepository = votingRepository;
             _userRepository = userRepository;
+            _sieveProcessor = sieveProcessor;
         }
 
         public async Task<CreateVotingResponseDto> CreateVoting(CreateVotingRequestDto voting)
@@ -47,9 +52,28 @@ namespace VotingBackend.Services
             return response;
         }
 
-        public async Task<List<Voting>> GetAllVoting()
+        public async Task<List<VotingDto>> GetAllVoting(SieveModel sieve)
         {
-            return await _votingRepository.GetAllVoting();
+            var votings = _votingRepository.GetAll();
+            votings = _sieveProcessor.Apply(sieve, votings);
+            votings = votings.Include(v => v.Category);
+
+            List<VotingDto> votingList = new List<VotingDto>();
+            foreach (var item in votings)
+            {
+                votingList.Add(new VotingDto
+                {
+                    ID = item.ID,
+                    Name = item.Name,
+                    Category = item.Category.Name,
+                    Description = item.Description,
+                    CreatedDate = item.CreatedDate,
+                    DueDate = item.DueDate,
+                    VotersCount = item.VotersCount
+                });
+            }
+
+            return votingList;
         }
 
         public async Task<VotingDto> Vote(VoteRequestDto request, Guid userId)
@@ -90,6 +114,32 @@ namespace VotingBackend.Services
             {
                 throw ex;
             }
+        }
+
+        public async Task<VotingDto> GetVoteDetail(Guid id)
+        {
+            try
+            {
+                var voting = await _votingRepository.GetVoteById(id);
+
+                VotingDto votingDto = new VotingDto
+                {
+                    ID = voting.ID,
+                    Description = voting.Description,
+                    Name = voting.Name,
+                    DueDate = voting.DueDate,
+                    VotersCount = voting.VotersCount,
+                    CreatedDate = voting.CreatedDate,
+                    Category = voting.Category.Name
+                };
+
+                return votingDto;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+           
         }
     }
 }

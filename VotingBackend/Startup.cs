@@ -20,6 +20,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using Sieve.Services;
+using VotingBackend.Application_Start;
 
 namespace VotingBackend
 {
@@ -72,11 +74,12 @@ namespace VotingBackend
                 });
             });
 
+            services.AddScoped<ISieveProcessor, ApplicationSieveProcessor>();
+
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IVotingService, VotingService>();
             services.AddScoped<ICategoryService, CategoryService>();
-
 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IVotingRepository, VotingRepository>();
