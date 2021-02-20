@@ -38,12 +38,14 @@ namespace VotingBackend.Services
             }
 
             var accessToken = _authHelper.GenerateToken(user, _configuration.GetValue<string>("JWTAccessKey"), TokenType.ACCESS_TOKEN);
-            var refrehToken = _authHelper.GenerateToken(user, _configuration.GetValue<string>("JWTRefreshKey"), TokenType.ACCESS_TOKEN);
+            var refreshToken = _authHelper.GenerateToken(user, _configuration.GetValue<string>("JWTRefreshKey"), TokenType.ACCESS_TOKEN);
+            user.RefreshToken = refreshToken;
+            await _userRepository.UpdateAsync(user);
 
             LoginResponseDto response = new LoginResponseDto
             {
                 AccessToken = accessToken,
-                RefreshToken = refrehToken,
+                RefreshToken = refreshToken,
                 User = new UserDto
                 {
                     Email = user.Email,
@@ -53,6 +55,20 @@ namespace VotingBackend.Services
             };
 
             return response;
+        }
+
+        public async Task Logout(Guid userId)
+        {
+            try
+            {
+                var user = await _userRepository.GetUserById(userId);
+                user.RefreshToken = "";
+                await _userRepository.UpdateAsync(user);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }

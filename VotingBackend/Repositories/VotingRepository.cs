@@ -18,5 +18,20 @@ namespace VotingBackend.Repositories
         {
             return await GetAll().ToListAsync();
         }
+
+        public async Task<Voting> GetVoteById(Guid id)
+        {
+            try
+            {
+                return await GetAll().Where(v => v.ID == id)
+                    .Include(v=>v.Category)
+                    .Include(v=>v.Voters)
+                    .FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

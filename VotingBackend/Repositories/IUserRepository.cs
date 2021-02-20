@@ -9,6 +9,7 @@ namespace VotingBackend.Repositories
     public interface IUserRepository : IRepository<User>
     {
         Task<User> GetUserByEmail(string email);
+        Task<User> GetUserById(Guid id);
         Task<User> GetUserByEmailAndRole(string email, string role);
     }
 }

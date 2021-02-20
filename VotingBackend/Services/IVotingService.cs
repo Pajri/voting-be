@@ -11,5 +11,6 @@ namespace VotingBackend.Services
     {
         Task<List<Voting>> GetAllVoting();
         Task<CreateVotingResponseDto> CreateVoting(CreateVotingRequestDto voting);
+        Task<VotingDto> Vote(VoteRequestDto request, Guid userId);
     }
 }

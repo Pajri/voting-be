@@ -25,7 +25,7 @@ namespace VotingBackend.Repositories
             try
             {
                 await _context.AddAsync(entity);
-                await _context.SaveChangesAsync();
+                var a = await _context.SaveChangesAsync();
 
                 return entity;
             }

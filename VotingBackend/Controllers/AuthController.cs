@@ -41,5 +41,19 @@ namespace VotingBackend.Controllers
 
             return Ok(response);
         }
+
+        [HttpPost("logout")]
+        public async Task<ActionResult> Logout(Guid userId)
+        {
+            try
+            {
+                await _service.Logout(userId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
+        }
     }
 }

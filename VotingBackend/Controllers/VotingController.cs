@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using VotingBackend.Constants;
 using VotingBackend.Dtos;
+using VotingBackend.Exceptions;
 using VotingBackend.Models;
 using VotingBackend.Services;
 
@@ -36,6 +38,26 @@ namespace VotingBackend.Controllers
         {
             var voting = await _service.CreateVoting(request);
             return Ok(voting);
+        }
+
+        [HttpPost("vote")]
+        [Authorize(Roles = Constant.ROLE_CLIENT)]
+        public async Task<ActionResult<VotingDto>> Vote(VoteRequestDto request)
+        {
+            try
+            {
+                var userId = new Guid(User.Identities.First().Name);
+                var voting = await _service.Vote(request, userId);
+                return Ok(voting);
+            }
+            catch (Exception ex)
+            {
+                if(ex is HttpExceptionBase)
+                {
+                    return BadRequest(ex);
+                }
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex);
+            }
         }
 
         

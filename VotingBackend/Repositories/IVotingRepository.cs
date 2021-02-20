@@ -9,5 +9,6 @@ namespace VotingBackend.Repositories
     public interface IVotingRepository : IRepository<Voting>
     {
         Task<List<Voting>> GetAllVoting();
+        Task<Voting> GetVoteById(Guid id);
     }
 }

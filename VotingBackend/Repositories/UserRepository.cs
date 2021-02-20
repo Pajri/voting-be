@@ -23,5 +23,10 @@ namespace VotingBackend.Repositories
         {
             return await GetAll().Where(u => u.Email == email && u.Role == role).FirstOrDefaultAsync();
         }
+
+        public async Task<User> GetUserById(Guid id)
+        {
+            return await GetAll().Where(u => u.ID == id).FirstOrDefaultAsync();
+        }
     }
 }

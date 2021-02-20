@@ -15,6 +15,7 @@ namespace VotingBackend.Models
         public int Gender { get; set; }
         public int Age { get; set; }
         public String Role { get; set; }
+        public String RefreshToken { get; set; }
 
         public virtual ICollection<Voting> Votings { get; set;  }
     }
