@@ -1,4 +1,4 @@
-﻿@model VotingBackend.Models.Voting
+﻿@model VotingBackend.ViewModel.VotingViewModel
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @addTagHelper *, VotingBackend
@@ -24,16 +24,6 @@
                 <label asp-for="Description" class="control-label"></label>
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedDate" class="control-label"></label>
-                <input asp-for="CreatedDate" class="form-control" />
-                <span asp-validation-for="CreatedDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="VotersCount" class="control-label"></label>
-                <input asp-for="VotersCount" class="form-control" />
-                <span asp-validation-for="VotersCount" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="DueDate" class="control-label"></label>

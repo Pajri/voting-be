@@ -1,10 +1,10 @@
-﻿@model IEnumerable<VotingBackend.Models.Voting>
+﻿@model IEnumerable<VotingBackend.ViewModel.VotingViewModel>
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @addTagHelper *, VotingBackend
 
 @using System.Collections
-@using VotingBackend.Models
+@using VotingBackend.ViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -15,7 +15,8 @@
 <form asp-controller="Votings" asp-action="Index">
     <p>
         Title: <input type="text" name="SearchString">
-        Category : @Html.DropDownList("SelectedCategory", new SelectList((IEnumerable<Category>)ViewData["Categories"], "ID", "Name"))
+        @*Category : @Html.DropDownList("SelectedCategory", new SelectList((SelectList)ViewData["Categories"], "ID", "Name"))*@
+        <select name="selectedCategory" class="form-control" asp-items="ViewBag.Categories"></select>
         <input type="submit" value="Filter" />
 
     </p>
@@ -68,7 +69,7 @@
                     @Html.DisplayFor(modelItem => item.DueDate)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Category.Name)
+                    @Html.DisplayFor(modelItem => item.Category)
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
@@ -79,3 +80,8 @@
         }
     </tbody>
 </table>
+
+@for (var i = 1; i <= (int)ViewData["PageNum"]; i++)
+{
+    <a asp-action="@i" >@i</a>;
+}

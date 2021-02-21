@@ -85,6 +85,7 @@ namespace VotingBackend
             services.AddScoped<ICategoryService, CategoryService>();
 
             services.AddScoped<ICategoriesService, CategoriesService>();
+            services.AddScoped<IVotingsService, VotingsService>();
 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IVotingRepository, VotingRepository>();
@@ -133,7 +134,7 @@ namespace VotingBackend
                 endpoints.MapControllers();
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}");
             });
 
 

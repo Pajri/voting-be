@@ -10,5 +10,8 @@ namespace VotingBackend.Repositories
     {
         Task<List<Voting>> GetAllVoting();
         Task<Voting> GetVoteById(Guid id);
+        bool IsVotingExists(Guid id);
+        Task<Voting> DeleteVoting(Guid id);
+        Task<(List<Voting>, int)> Filter(string searchString, Guid selectedCategory, int page);
     }
 }

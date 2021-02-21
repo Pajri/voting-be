@@ -1,4 +1,4 @@
-﻿@model VotingBackend.Models.Voting
+﻿@model VotingBackend.ViewModel.VotingViewModel
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @addTagHelper *, VotingBackend
@@ -48,7 +48,7 @@
             @Html.DisplayNameFor(model => model.Category)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Category.Name)
+            @Html.DisplayFor(model => model.Category)
         </dd>
     </dl>
 

@@ -36,7 +36,7 @@ namespace VotingBackend.Test.Controllers
                 .Setup(service => service.RegisterUser(req))
                 .ReturnsAsync(RegisterTest(req));
 
-            var controller = new UserController(mockService.Object);
+            var controller = new ApiUserController(mockService.Object);
 
             //act
             var result = await controller.RegisterUser(req);
@@ -63,7 +63,7 @@ namespace VotingBackend.Test.Controllers
                 .Setup(service => service.RegisterUser(req))
                 .Throws<UserAlreadyRegisteredException>();
 
-            var controller = new UserController(mockService.Object);
+            var controller = new ApiUserController(mockService.Object);
 
             //act
             var result = await controller.RegisterUser(req);

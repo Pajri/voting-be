@@ -23,7 +23,7 @@ namespace VotingBackend.Test.Controllers
                 .Setup(service => service.GetVoteDetail(id))
                 .ReturnsAsync(VotingTest(id));
 
-            var controller = new VotingController(mockService.Object);
+            var controller = new ApiVotingController(mockService.Object);
 
             //act
             var result = await controller.Index(id);

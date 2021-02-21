@@ -8,37 +8,47 @@ using Microsoft.EntityFrameworkCore;
 using VotingBackend.Data;
 using VotingBackend.Models;
 using System.Linq;
+using VotingBackend.Services.Web;
+using VotingBackend.ViewModel;
+using System.Net.Http;
 
 namespace VotingBackend.Controllers
 {
+
+    [Route("votings")]
     public class VotingsController : Controller
     {
-        private readonly VotingDbContext _context;
+        private readonly ICategoriesService _categoriesService;
+        private readonly IVotingsService _votingsService;
 
-        public VotingsController(VotingDbContext context)
+        public VotingsController(ICategoriesService categoriesService, IVotingsService votingsService)
         {
-            _context = context;
+            _categoriesService = categoriesService;
+            _votingsService = votingsService;
         }
 
         // GET: Votings
-        public async Task<IActionResult> Index(string searchString, string selectedCategory)
+
+        [Route("")]
+        [Route("{page:int}")]
+        public async Task<IActionResult> Index([FromRoute] int page, string searchString, Guid selectedCategory)
         {
-            IQueryable<Voting> votings = _context.Voting.Include(v => v.Category);
-
-            if(searchString != null && searchString != "")
+            if (page > 0) page -= 1;
+            if (Request.Method == HttpMethod.Post.Method)
             {
-                votings = votings.Where(v => v.Name.ToLower().Contains(searchString.ToLower()));
+                page = 0;
             }
 
-            if(selectedCategory != null && selectedCategory != "")
-            {
-                votings = votings.Where(v => v.Category.ID == new Guid(selectedCategory));
+            var (votings, pageNum) = await _votingsService.Filter(searchString, selectedCategory, page);
 
-            }
-
-            return View(await votings.ToListAsync());
+            var categories = await _categoriesService.GetAll();
+            categories.Insert(0, new CategoryViewModel { ID = Guid.Empty,Name = "--All--" });
+            ViewData["Categories"] = new SelectList(categories, "ID", "Name");
+            ViewData["PageNum"] = pageNum;
+            return View(votings);
         }
 
+        [Route("Details")]
         // GET: Votings/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
@@ -47,9 +57,7 @@ namespace VotingBackend.Controllers
                 return NotFound();
             }
 
-            var voting = await _context.Voting
-                .Include(v => v.Category)
-                .FirstOrDefaultAsync(m => m.ID == id);
+            var voting = await _votingsService.Details((Guid) id);
             if (voting == null)
             {
                 return NotFound();
@@ -58,32 +66,36 @@ namespace VotingBackend.Controllers
             return View(voting);
         }
 
+        [Route("Create")]
         // GET: Votings/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Category, "ID", "Name");
+            var categories = await _categoriesService.GetAll();
+            ViewData["CategoryId"] = new SelectList(categories, "ID", "Name");
             return View();
         }
 
         // POST: Votings/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Route("Create")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Description,CreatedDate,VotersCount,DueDate,CategoryId")] Voting voting)
+        public async Task<IActionResult> Create([Bind("Name,Description,DueDate,CategoryId")] VotingViewModel voting)
         {
             if (ModelState.IsValid)
             {
-                voting.ID = Guid.NewGuid();
-                _context.Add(voting);
-                await _context.SaveChangesAsync();
+                await _votingsService.Create(voting);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "ID", "Name", voting.CategoryId);
+            
+             var categories = await _categoriesService.GetAll();
+            ViewData["CategoryId"] = new SelectList(categories, "ID", "Name");
             return View(voting);
         }
 
         // GET: Votings/Edit/5
+        [Route("Edit")]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -91,21 +103,24 @@ namespace VotingBackend.Controllers
                 return NotFound();
             }
 
-            var voting = await _context.Voting.FindAsync(id);
+            var voting = await _votingsService.Details((Guid)id);
             if (voting == null)
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "ID", "Name", voting.CategoryId);
+
+            var categories = await _categoriesService.GetAll();
+            ViewData["CategoryId"] = new SelectList(categories, "ID", "Name", voting.CategoryId);
             return View(voting);
         }
 
         // POST: Votings/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Route("Edit")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("ID,Name,Description,CreatedDate,VotersCount,DueDate,CategoryId")] Voting voting)
+        public async Task<IActionResult> Edit(Guid id, [Bind("ID,Name,Description,DueDate,CategoryId")] VotingViewModel voting)
         {
             if (id != voting.ID)
             {
@@ -116,8 +131,7 @@ namespace VotingBackend.Controllers
             {
                 try
                 {
-                    _context.Update(voting);
-                    await _context.SaveChangesAsync();
+                    await _votingsService.Edit(voting);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -132,11 +146,14 @@ namespace VotingBackend.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "ID", "Name", voting.CategoryId);
+
+            var categories = await _categoriesService.GetAll();
+            ViewData["CategoryId"] = new SelectList(categories, "ID", "Name", voting.CategoryId);
             return View(voting);
         }
 
         // GET: Votings/Delete/5
+        [Route("Delete")]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -144,9 +161,7 @@ namespace VotingBackend.Controllers
                 return NotFound();
             }
 
-            var voting = await _context.Voting
-                .Include(v => v.Category)
-                .FirstOrDefaultAsync(m => m.ID == id);
+            var voting = await _votingsService.Details((Guid)id);
             if (voting == null)
             {
                 return NotFound();
@@ -156,19 +171,18 @@ namespace VotingBackend.Controllers
         }
 
         // POST: Votings/Delete/5
+        [Route("Delete")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var voting = await _context.Voting.FindAsync(id);
-            _context.Voting.Remove(voting);
-            await _context.SaveChangesAsync();
+            await _votingsService.Delete(id);
             return RedirectToAction(nameof(Index));
         }
 
         private bool VotingExists(Guid id)
         {
-            return _context.Voting.Any(e => e.ID == id);
+            return _votingsService.IsVotingExists(id);
         }
     }
 }
