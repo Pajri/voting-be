@@ -15,10 +15,10 @@ namespace VotingBackend.Controllers
     [Produces("application/json")]
     [Route("api/user")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class ApiUserController : ControllerBase
     {
         private readonly IUserService _service;
-        public UserController(IUserService service)
+        public ApiUserController(IUserService service)
         {
             _service = service;
         }

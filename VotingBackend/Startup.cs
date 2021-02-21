@@ -22,6 +22,7 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 using Sieve.Services;
 using VotingBackend.Application_Start;
+using VotingBackend.Services.Web;
 
 namespace VotingBackend
 {
@@ -41,6 +42,8 @@ namespace VotingBackend
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddControllers().AddNewtonsoftJson();
+            services.AddRazorPages().AddNewtonsoftJson();
+
 
             services.AddSwaggerGen(c =>
             {
@@ -80,6 +83,8 @@ namespace VotingBackend
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IVotingService, VotingService>();
             services.AddScoped<ICategoryService, CategoryService>();
+
+            services.AddScoped<ICategoriesService, CategoriesService>();
 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IVotingRepository, VotingRepository>();
@@ -124,14 +129,19 @@ namespace VotingBackend
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapRazorPages();
                 endpoints.MapControllers();
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Voting API V1");
-                c.RoutePrefix = string.Empty;
+                //c.RoutePrefix = string.Empty;
             });
         }
     }

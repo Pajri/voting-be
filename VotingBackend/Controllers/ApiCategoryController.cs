@@ -14,10 +14,10 @@ namespace VotingBackend.Controllers
 {
     [Route("api/category")]
     [ApiController]
-    public class CategoryController : ControllerBase
+    public class ApiCategoryController : ControllerBase
     {
         private readonly ICategoryService _service;
-        public CategoryController(ICategoryService service)
+        public ApiCategoryController(ICategoryService service)
         {
             _service = service;
         }

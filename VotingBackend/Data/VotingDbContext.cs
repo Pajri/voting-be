@@ -99,5 +99,9 @@ namespace VotingBackend.Data
                 entity.HasMany(e => e.Voters).WithMany(e => e.Votings);
             });
         }
+
+        public DbSet<VotingBackend.Models.Category> Category { get; set; }
+
+        public DbSet<VotingBackend.Models.Voting> Voting { get; set; }
     }
 }

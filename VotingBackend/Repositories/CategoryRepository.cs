@@ -18,32 +18,22 @@ namespace VotingBackend.Repositories
         public async Task<Category> GetCategoryById(Guid id)
         {
             Category category;
-            try
-            {
-                category = await GetAll().Where(c => c.ID == id).FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
+            category = await GetAll().Where(c => c.ID == id).FirstOrDefaultAsync();
             return category;
         }
 
         public async Task<Category> DeleteCategory(Guid id)
         {
             Category category;
-            try
-            {
-                category = await GetCategoryById(id);
-                _context.Remove(category);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            category = await GetCategoryById(id);
+            _context.Remove(category);
+            await _context.SaveChangesAsync();
             return category;
+        }
+
+        public bool IsCategoryExists(Guid id)
+        {
+            return GetAll().Any(c => c.ID == id);
         }
     }
 }

@@ -13,10 +13,10 @@ namespace VotingBackend.Controllers
 {
     [Route("api/auth")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class APIAuthController : ControllerBase
     {
         private readonly IAuthService _service;
-        public AuthController(IAuthService service)
+        public APIAuthController(IAuthService service)
         {
             _service = service;
         }

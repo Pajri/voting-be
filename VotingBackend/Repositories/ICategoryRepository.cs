@@ -10,5 +10,6 @@ namespace VotingBackend.Repositories
     {
         Task<Category> GetCategoryById(Guid id);
         Task<Category> DeleteCategory(Guid id);
+        bool IsCategoryExists(Guid id);
     }
 }

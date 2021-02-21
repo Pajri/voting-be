@@ -18,11 +18,11 @@ namespace VotingBackend.Controllers
     [Produces("application/json")]
     [Route("api/voting")]
     [ApiController]
-    public class VotingController : ControllerBase
+    public class ApiVotingController : ControllerBase
     {
         private readonly IVotingService _service;
 
-        public VotingController(IVotingService service)
+        public ApiVotingController(IVotingService service)
         {
             _service = service;
         }
