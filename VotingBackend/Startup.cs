@@ -120,6 +120,10 @@ namespace VotingBackend
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseDeveloperExceptionPage();
+
+            app.UseStaticFiles();
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -139,6 +143,7 @@ namespace VotingBackend
 
 
             app.UseSwagger();
+        
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Voting API V1");

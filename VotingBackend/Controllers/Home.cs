@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace VotingBackend.Controllers
 {
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class Home : Controller
     {
         public IActionResult Index()

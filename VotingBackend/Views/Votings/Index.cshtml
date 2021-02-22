@@ -10,15 +10,17 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-
 <form asp-controller="Votings" asp-action="Index">
     <p>
-        Title: <input type="text" name="SearchString">
-        @*Category : @Html.DropDownList("SelectedCategory", new SelectList((SelectList)ViewData["Categories"], "ID", "Name"))*@
-        <select name="selectedCategory" class="form-control" asp-items="ViewBag.Categories"></select>
-        <input type="submit" value="Filter" />
-
+        <div class="row my-2">
+            <div class="col-md-3">Title</div>
+            <div class="col-md-6"> <input type="text" name="SearchString" /></div>
+        </div>
+        <div class="row my-2">
+            <div class="col-md-3">Category</div>
+            <div class="col-md-6"><select name="selectedCategory" class="form-control" asp-items="ViewBag.Categories"></select></div>
+        </div>
+        <div class="r0w"><input type="submit" value="Filter" /></div>
     </p>
 </form>
 
@@ -81,7 +83,13 @@
     </tbody>
 </table>
 
-@for (var i = 1; i <= (int)ViewData["PageNum"]; i++)
-{
-    <a asp-action="@i" >@i</a>;
-}
+
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        @for (var i = 1; i <= (int)ViewData["PageNum"]; i++)
+        {
+            <li class="page-item"><a class="page-link"asp-action="@i">@i</a></li>
+        }
+    </ul>
+</nav>

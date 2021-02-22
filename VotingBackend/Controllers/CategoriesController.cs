@@ -12,6 +12,7 @@ using VotingBackend.ViewModel;
 
 namespace VotingBackend.Controllers
 {
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class CategoriesController : Controller
     {
         private readonly ICategoriesService _service;

@@ -16,6 +16,7 @@ namespace VotingBackend.Controllers
 {
 
     [Route("votings")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class VotingsController : Controller
     {
         private readonly ICategoriesService _categoriesService;
